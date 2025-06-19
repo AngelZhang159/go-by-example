@@ -7,6 +7,8 @@ type rect struct {
 	height int
 }
 
+// Just because these two funcs receive a struct, they become part of it and can be called with "." on the struct
+
 // In this example, both func are the same bc they are not modifying the og struct passed
 // If you pass a pointer, then any change you make in the func reflects in the original struct
 // If you pass the value itself it makes a copy and the original is not affected
