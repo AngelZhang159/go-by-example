@@ -1,21 +1,36 @@
 package main
 
-import (
-	"fmt"
-	"os"
+import "fmt"
+
+// do "go generate" and then "go run constants.go serverstate_string.go"
+//
+//go:generate stringer -type=ServerState
+type ServerState int
+
+const (
+	StateIdle ServerState = iota
+	StateConnected
+	StateError
+	StateRetrying
 )
 
 func main() {
-	fmt.Printf("Running %s go on %s\n", os.Args[0], os.Getenv("GOFILE"))
+	ns := transition(StateIdle)
+	fmt.Println(ns)
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("  cwd = %s\n", cwd)
-	fmt.Printf("  os.Args = %#v\n", os.Args)
+	ns2 := transition(ns)
+	fmt.Println(ns2)
+}
 
-	for _, ev := range []string{"GOARCH", "GOOS", "GOFILE", "GOLINE", "GOPACKAGE", "DOLLAR"} {
-		fmt.Println("  ", ev, "=", os.Getenv(ev))
+func transition(s ServerState) ServerState {
+	switch s {
+	case StateIdle:
+		return StateConnected
+	case StateConnected, StateRetrying:
+		return StateIdle
+	case StateError:
+		return StateError
+	default:
+		panic(fmt.Errorf("unknown state: %s", s))
 	}
 }
