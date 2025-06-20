@@ -1,21 +1,36 @@
 package main
 
-import (
-	"fmt"
-	"math"
+import "fmt"
+
+// do "go generate" and then "go run constants.go serverstate_string.go"
+//
+//go:generate stringer -type=ServerState
+type ServerState int
+
+const (
+	StateIdle ServerState = iota
+	StateConnected
+	StateError
+	StateRetrying
 )
 
-const s = "constant"
-
 func main() {
-	fmt.Println(s)
+	ns := transition(StateIdle)
+	fmt.Println(ns)
 
-	const n = 500000000
+	ns2 := transition(ns)
+	fmt.Println(ns2)
+}
 
-	const d = 3e20 / n
-
-	fmt.Println(d)
-	fmt.Println(int64(d))
-
-	fmt.Println(math.Sin(n))
+func transition(s ServerState) ServerState {
+	switch s {
+	case StateIdle:
+		return StateConnected
+	case StateConnected, StateRetrying:
+		return StateIdle
+	case StateError:
+		return StateError
+	default:
+		panic(fmt.Errorf("unknown state: %s", s))
+	}
 }
