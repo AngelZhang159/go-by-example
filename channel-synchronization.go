@@ -14,7 +14,8 @@ func main() {
 	go worker(done)
 
 	//even if the go workers are not finished, if these channels do not wait for a response of the worker, the program will end
-	//<-done
+
+	//with this, the program will block until it receives a message from the channel
 	<-done
 
 	//if you don't have any calls to the goroutine but still expect a message, it will deadlock because nobody will ever send it, to fix this you do this:
