@@ -33,4 +33,5 @@ func main() {
 		fmt.Println("timer 2 fired")
 	}
 
+	time.Sleep(2 * time.Second)
 }
